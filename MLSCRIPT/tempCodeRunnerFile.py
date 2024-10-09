@@ -1,0 +1,7 @@
+disease_predictor = DiseasePredictor("Training.csv", "Testing.csv")
+# disease_predictor.load_data()
+# disease_predictor.cross_validation()
+# disease_predictor.train_models()
+# disease_predictor.evaluate_models()
+# disease_predictor.majority_voting()
+# disease_predictor.create_symptom_index()
