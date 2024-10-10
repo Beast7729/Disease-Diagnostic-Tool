@@ -23,14 +23,48 @@ class DiseasePredictor:
             "RandomForest": RandomForestClassifier(random_state=18),
             "DecisionTree": DecisionTreeClassifier(random_state=18)
         }
+
         self.encoder = LabelEncoder()
         self.data_dict = {}
         self.symptom_index = {}
         self.final_models = {}
 
+    
+
+
+# Define a function to get disease details
+    def get_disease_info(self,disease_name):
+        ddf=pd.read_csv('diseases.csv')
+        # Check if the disease exists in the dataset
+        disease_data = ddf[ddf['Disease'].str.lower() == disease_name.lower()]
+        
+        if not disease_data.empty:
+            # Extract the relevant information
+            symptoms = disease_data['Symptoms'].values[0]
+            treatment = disease_data['Treatment'].values[0]
+            fatality = disease_data['Fatality'].values[0]
+            time_to_cure = disease_data['Time to Cure (Days/Weeks)'].values[0]
+            
+            # Return the disease details
+            return {
+                "Symptoms": symptoms,
+                "Treatment": treatment,
+                "Fatality": fatality,
+                "Time to Cure": time_to_cure
+            }
+        else:
+            return f"Disease '{disease_name}' not found in the database."
+
+
+
+
     def load_data(self):
         """Load the training data and prepare it."""
         self.data = pd.read_csv(self.data_path).dropna(axis=1)
+        print(self.data['prognosis'].unique())
+        
+
+
         self.data['prognosis'] = self.encoder.fit_transform(self.data['prognosis'])
         X = self.data.iloc[:, :-1]
         y = self.data.iloc[:, -1]
@@ -117,7 +151,7 @@ class DiseasePredictor:
         : {accuracy_score(self.y_test, preds)*100}")
 
         cf_matrix = confusion_matrix(self.y_test, preds)
-        plt.figure(figsize=(12,8))
+        plt.figure(figsize=(12,8)),
         sns.heatmap(cf_matrix, annot=True)
         plt.title("Confusion Matrix for Random Forest Classifier on Test Data")
         plt.show()
